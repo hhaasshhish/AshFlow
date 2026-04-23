@@ -2,99 +2,580 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Ashish Singh Thakur — Immersive Creative Portfolio</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUMINA STUDIO — Immersive Creative Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,600,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <style>
+        :root { --accent: #ddd; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #050505;
+            color: #f0f0f0;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        .loader {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.8s ease;
+        }
+        .loader-text {
+            font-size: 1.8rem;
+            letter-spacing: 8px;
+            background: linear-gradient(135deg, #fff, #aaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            padding: 1.8rem 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(5,5,5,0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .logo {
+            font-size: 2.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #ccc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+        .nav-links a {
+            color: #ddd;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: #fff; }
+        .menu-btn { display: none; font-size: 1.8rem; cursor: pointer; }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        #canvas-container {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 960px;
+            padding: 0 20px;
+        }
+        .hero h1 {
+            font-size: clamp(3rem, 9vw, 7.5rem);
+            line-height: 1.05;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #ccc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero p {
+            font-size: 1.4rem;
+            color: #bbb;
+            max-width: 620px;
+            margin: 1.5rem auto 2.5rem;
+        }
+        .cta-button {
+            padding: 1.2rem 3rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(12px);
+            color: white;
+            font-size: 1.15rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+        .cta-button:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-4px);
+        }
+
+        section { padding: 120px 6%; position: relative; }
+        .section-title {
+            font-size: clamp(2.4rem, 6vw, 3.8rem);
+            text-align: center;
+            margin-bottom: 4rem;
+            background: linear-gradient(135deg, #fff, #aaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 2.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .card {
+            background: rgba(25,25,25,0.8);
+            border-radius: 28px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(16px);
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-14px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+        }
+        .card img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+        }
+        .card-body { padding: 1.8rem; }
+        .model-viewer {
+            height: 260px;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: #555;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background: #111;
+            max-width: 1000px;
+            width: 100%;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2.5rem;
+            color: #aaa;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .admin-panel {
+            max-width: 900px;
+            margin: 4rem auto;
+            background: rgba(15,15,15,0.95);
+            backdrop-filter: blur(24px);
+            border-radius: 32px;
+            padding: 3rem;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+        .admin-input, .admin-form input, .admin-form textarea {
+            width: 100%;
+            padding: 1rem 1.4rem;
+            margin-bottom: 1rem;
+            background: #1f1f1f;
+            border: 1px solid #444;
+            border-radius: 20px;
+            color: #fff;
+        }
+        .admin-btn {
+            background: linear-gradient(135deg, #fff, #ccc);
+            color: #111;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        footer {
+            text-align: center;
+            padding: 4rem 5%;
+            color: #666;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: #050505;
+                padding: 2rem;
+                gap: 1.5rem;
+            }
+            .nav-links.active { display: flex; }
+            .menu-btn { display: block; }
+            section { padding: 80px 5%; }
+        }
+    </style>
 </head>
 <body>
 
-<div class="loader" id="loader">
-    <div class="loader-text">INITIALIZING STUDIO...</div>
-</div>
-
-<div class="cursor-dot"></div>
-<div class="cursor-outline"></div>
-
-<nav>
-    <div class="logo">ASHISH.</div>
-    <div class="nav-links">
-        <a href="#work" class="magnetic">Work</a>
-        <a href="#models" class="magnetic">3D Workflows</a>
-        <a href="#about" class="magnetic">About</a>
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="loader-text">INITIALIZING STUDIO...</div>
     </div>
-    <div class="menu-btn"><i class="fas fa-bars"></i></div>
-</nav>
 
-<div class="hero">
-    <div id="canvas-container"></div>
-    <div class="hero-content">
-        <h1 class="reveal-text">Designing<br><span class="gradient-text">Realities.</span></h1>
-        <p class="fade-up">Proprietor of M B Enterprises · 3D Rendering & Motion Artist</p>
-        <a href="#work" class="cta-button fade-up">Explore Universe →</a>
-    </div>
-</div>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">LUMINA</div>
+        <div class="nav-links" id="nav-links">
+            <a href="#work">Work</a>
+            <a href="#models">3D Models</a>
+            <a href="#writing">Writing</a>
+            <a href="#fonts">Fonts</a>
+            <a href="#studio">Studio</a>
+        </div>
+        <div class="menu-btn" id="menu-btn"><i class="fas fa-bars"></i></div>
+    </nav>
 
-<section id="work">
-    <h2 class="section-title">Featured Archives</h2>
-    <div class="work-grid">
-        <div class="work-card">
-            <div class="work-img"><img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" alt="Enigma Narratives"></div>
-            <div class="work-info">
-                <h3>Enigma Narratives</h3>
-                <p>Comprehensive visual identity, scriptwriting workflows, and motion sequences crafted for historical mysteries and real-world digital content.</p>
-            </div>
-        </div>
-        <div class="work-card">
-            <div class="work-img"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop" alt="Rig Telemetry"></div>
-            <div class="work-info">
-                <h3>Rig Telemetry Analytics</h3>
-                <p>Sleek, dark-mode dashboard interfaces engineered for monitoring high-end PC component telemetry, cooling speeds, and hardware performance metrics.</p>
-            </div>
-        </div>
-        <div class="work-card">
-            <div class="work-img"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2569&auto=format&fit=crop" alt="IntelliRose"></div>
-            <div class="work-info">
-                <h3>IntelliRose Reconstruction</h3>
-                <p>Architectural visualization and spatial design for office renovations, including advanced seminar hall layouts and lighting rigs.</p>
-            </div>
+    <!-- Hero -->
+    <div class="hero">
+        <div id="canvas-container"></div>
+        <div class="hero-content">
+            <h1>Where Creativity<br>Meets Code</h1>
+            <p>Immersive 3D experiences • Bespoke typography • Design that breathes</p>
+            <a href="#work" class="cta-button">Explore the Universe <i class="fas fa-arrow-right"></i></a>
         </div>
     </div>
-</section>
 
-<section id="models">
-    <h2 class="section-title">3D Explorations</h2>
-    <div class="models-grid">
-        <div class="model-card">
-            <div class="model-viewer"><i class="fas fa-cube fa-4x text-gray-500"></i></div>
-            <div class="model-info">
-                <h3>Stylized Environments</h3>
-                <p>Pixar and Ghibli-inspired spatial rendering utilizing advanced prompt engineering and intricate texture mapping.</p>
-            </div>
+    <!-- Work -->
+    <section id="work">
+        <h2 class="section-title">Featured Work</h2>
+        <div class="grid" id="work-grid"></div>
+    </section>
+
+    <!-- 3D Models -->
+    <section id="models">
+        <h2 class="section-title">3D Explorations</h2>
+        <div class="grid" id="models-grid"></div>
+    </section>
+
+    <!-- Writing -->
+    <section id="writing">
+        <h2 class="section-title">Creative Writing</h2>
+        <div class="grid" id="writing-grid"></div>
+    </section>
+
+    <!-- Fonts -->
+    <section id="fonts">
+        <h2 class="section-title">Typography Lab</h2>
+        <div class="grid" id="fonts-showcase"></div>
+    </section>
+
+    <!-- Studio -->
+    <section id="studio">
+        <h2 class="section-title">Studio Access</h2>
+        <div class="admin-panel" id="admin-login">
+            <h3 style="text-align:center;margin-bottom:2rem;">Enter the Studio</h3>
+            <input type="email" id="admin-email" class="admin-input" value="admin@portfolio.com" placeholder="Email">
+            <input type="password" id="admin-password" class="admin-input" value="creative2025" placeholder="Password">
+            <button id="login-btn" class="admin-btn">Unlock Creative Realm</button>
+            <div id="login-error" style="color:#ff6b6b;text-align:center;margin-top:1rem;"></div>
         </div>
-        <div class="model-card">
-            <div class="model-viewer"><i class="fas fa-video fa-4x text-gray-500"></i></div>
-            <div class="model-info">
-                <h3>Cinematic Motion</h3>
-                <p>Buttery-smooth camera tracking and lighting workflows applied to high-fidelity 3D assets.</p>
-            </div>
+        <div class="admin-panel" id="admin-panel" style="display:none;">
+            <p style="text-align:center;color:#aaa;margin-bottom:2rem;">Admin panel (add/edit content via browser — saved in localStorage)</p>
+            <button id="logout-btn" class="admin-btn" style="background:#333;color:white;">Logout</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 LUMINA STUDIO — Immersive Creative Portfolio</p>
+        <p style="margin-top:1rem;font-size:0.9rem;">Live on GitHub Pages • Fully static &amp; immersive</p>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal" id="project-modal">
+        <div class="modal-content" id="modal-content">
+            <span class="modal-close" id="modal-close">×</span>
         </div>
     </div>
-</section>
 
-<footer>
-    <p>© 2026 Ashish Singh Thakur — Immersive Creative Portfolio</p>
-</footer>
+    <!-- Three.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    <script type="module">
+        import * as THREE from 'three';
 
-<script src="script.js"></script>
+        // ==================== 3D IMMERSIVE BACKGROUND ====================
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050505);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.z = 18;
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        // Particles
+        const particleCount = 2800;
+        const positions = new Float32Array(particleCount * 3);
+        for (let i = 0; i < particleCount * 3; i += 3) {
+            positions[i]     = (Math.random() - 0.5) * 80;
+            positions[i + 1] = (Math.random() - 0.5) * 50;
+            positions[i + 2] = (Math.random() - 0.5) * 60;
+        }
+        const particlesGeo = new THREE.BufferGeometry();
+        particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const particlesMat = new THREE.PointsMaterial({
+            size: 0.09,
+            color: 0xdddddd,
+            transparent: true,
+            opacity: 0.7
+        });
+        const particles = new THREE.Points(particlesGeo, particlesMat);
+        scene.add(particles);
+
+        let time = 0;
+        function animateBackground() {
+            requestAnimationFrame(animateBackground);
+            time += 0.008;
+            particles.rotation.y = time * 0.1;
+            renderer.render(scene, camera);
+        }
+        animateBackground();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // ==================== DATA - EDIT THESE ARRAYS FOR YOUR CONTENT ====================
+        let worksData = JSON.parse(localStorage.getItem('lumina_works')) || [
+            {
+                id: 1,
+                title: "Neon Echo",
+                description: "Futuristic brand identity with 3D motion graphics",
+                image_url: "https://picsum.photos/id/1015/800/600",
+                icon: "fa-palette"
+            },
+            {
+                id: 2,
+                title: "Aether UI",
+                description: "Glassmorphic design system with immersive interactions",
+                image_url: "https://picsum.photos/id/201/800/600",
+                icon: "fa-mobile-alt"
+            }
+        ];
+
+        let modelsData = JSON.parse(localStorage.getItem('lumina_models')) || [
+            {
+                id: 1,
+                title: "Floating Orb",
+                description: "Procedural 3D sphere with dynamic lighting",
+                model_url: "#",
+                icon: "fa-cube"
+            }
+        ];
+
+        let writingsData = JSON.parse(localStorage.getItem('lumina_writings')) || [
+            {
+                id: 1,
+                title: "The Future of Spatial Design",
+                excerpt: "How 3D interfaces are changing digital experiences",
+                icon: "fa-pen-nib"
+            }
+        ];
+
+        let fontsData = JSON.parse(localStorage.getItem('lumina_fonts')) || [
+            {
+                id: 1,
+                name: "Lumina Variable",
+                description: "Modern geometric variable font",
+                icon: "fa-font"
+            }
+        ];
+
+        // Render functions
+        function renderSection(data, containerId, cardHTML) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = data.map(item => cardHTML(item)).join('');
+        }
+
+        function renderWorks() {
+            renderSection(worksData, 'work-grid', (w) => `
+                <div class="card" onclick="openModal('work', ${w.id})">
+                    <img src="${w.image_url}" alt="${w.title}">
+                    <div class="card-body">
+                        <i class="fas ${w.icon}" style="font-size:2rem;color:#aaa;margin-bottom:1rem;display:block;"></i>
+                        <h3>${w.title}</h3>
+                        <p>${w.description}</p>
+                    </div>
+                </div>
+            `);
+        }
+
+        function renderModels() {
+            renderSection(modelsData, 'models-grid', (m) => `
+                <div class="card" onclick="openModal('model', ${m.id})">
+                    <div class="model-viewer"><i class="fas ${m.icon} fa-5x"></i></div>
+                    <div class="card-body">
+                        <h3>${m.title}</h3>
+                        <p>${m.description}</p>
+                    </div>
+                </div>
+            `);
+        }
+
+        function renderWritings() {
+            renderSection(writingsData, 'writing-grid', (w) => `
+                <div class="card" onclick="openModal('writing', ${w.id})">
+                    <div class="card-body">
+                        <i class="fas ${w.icon} fa-3x" style="margin-bottom:1rem;display:block;"></i>
+                        <h3>${w.title}</h3>
+                        <p>${w.excerpt}</p>
+                    </div>
+                </div>
+            `);
+        }
+
+        function renderFonts() {
+            renderSection(fontsData, 'fonts-showcase', (f) => `
+                <div class="card" onclick="openModal('font', ${f.id})">
+                    <div class="card-body" style="text-align:center;">
+                        <i class="fas ${f.icon} fa-4x" style="margin-bottom:1rem;display:block;"></i>
+                        <h3>${f.name}</h3>
+                        <p>${f.description}</p>
+                    </div>
+                </div>
+            `);
+        }
+
+        // Modal
+        window.openModal = function(type, id) {
+            const modal = document.getElementById('project-modal');
+            const content = document.getElementById('modal-content');
+            let html = `<span class="modal-close" onclick="closeModal()">×</span>`;
+
+            if (type === 'work') {
+                const item = worksData.find(w => w.id === id);
+                html += `<div style="padding:3rem;"><h2>${item.title}</h2><img src="${item.image_url}" style="width:100%;border-radius:20px;margin:2rem 0;"><p>${item.description}</p></div>`;
+            } else if (type === 'model') {
+                const item = modelsData.find(m => m.id === id);
+                html += `<div style="padding:3rem;"><h2>${item.title}</h2><p>${item.description}</p><a href="${item.model_url}" target="_blank" style="color:#aaa;">View 3D Model →</a></div>`;
+            } else if (type === 'writing') {
+                const item = writingsData.find(w => w.id === id);
+                html += `<div style="padding:3rem;"><h2>${item.title}</h2><p>${item.excerpt}</p></div>`;
+            } else if (type === 'font') {
+                const item = fontsData.find(f => f.id === id);
+                html += `<div style="padding:3rem;"><h2>${item.name}</h2><p>${item.description}</p></div>`;
+            }
+            content.innerHTML = html;
+            modal.style.display = 'flex';
+        };
+
+        window.closeModal = function() {
+            document.getElementById('project-modal').style.display = 'none';
+        };
+
+        // Admin (browser only)
+        document.getElementById('login-btn').addEventListener('click', () => {
+            const email = document.getElementById('admin-email').value;
+            const password = document.getElementById('admin-password').value;
+            if (email === 'admin@portfolio.com' && password === 'creative2025') {
+                document.getElementById('admin-login').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+            } else {
+                document.getElementById('login-error').innerHTML = 'Invalid credentials';
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('admin-login').style.display = 'block';
+        });
+
+        // Mobile menu
+        document.getElementById('menu-btn').addEventListener('click', () => {
+            document.getElementById('nav-links').classList.toggle('active');
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('nav-links').classList.remove('active');
+            });
+        });
+
+        // Final load
+        window.addEventListener('load', () => {
+            // Safety timeout - loader always disappears
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 800);
+            }, 1500);
+
+            // Render everything
+            renderWorks();
+            renderModels();
+            renderWritings();
+            renderFonts();
+
+            // GSAP scroll animations
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.from('.hero h1', { y: 80, opacity: 0, duration: 1.4, ease: 'power4.out' });
+            gsap.from('.hero p', { y: 40, opacity: 0, duration: 1.2, delay: 0.4 });
+            gsap.from('.cta-button', { scale: 0.8, opacity: 0, duration: 1, delay: 0.8 });
+
+            console.log('%c✅ LUMINA STUDIO loaded successfully on GitHub Pages!', 'color:#aaa;font-family:monospace;font-size:13px');
+            console.log('→ Replace sample data in the JavaScript arrays to add your own work');
+        });
+    </script>
 </body>
 </html>
